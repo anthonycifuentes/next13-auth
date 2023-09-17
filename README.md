@@ -1,35 +1,105 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
-## Getting Started
+## Next.js 13 Authentication
 
-First, run the development server:
+This Next.js 13 project demonstrates how to implement authentication using JSON Web Tokens (JWTs).
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
+**Project structure:**
+
+```
+app/
+  (protected)
+    dashboard
+      page.js
+    settings
+      page.js
+    layout.js
+  api
+    login
+      route.js
+    me
+      route.js
+  provider
+    auth-provider.js
+  services
+    me.js
+  layout.js
+  page.js
+
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+**Main files:**
 
-You can start editing the page by modifying `app/page.js`. The page auto-updates as you edit the file.
+-   **auth-provider.js:**  This file provides a context for managing the user's authentication state. It uses the  `getMe`  service to fetch the current user from the API.
+-   **api/login/route.js:**  This file exposes an API endpoint for logging in users. It verifies the user's credentials and generates a JWT token if the login is successful.
+-   **api/me/route.js:**  This file exposes an API endpoint for fetching the current user's information. It verifies the user's JWT token before returning the user's information.
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+**Usage:**
 
-## Learn More
+To use authentication in your Next.js 13 project, you can wrap your app in the `AuthProvider` component. This will provide the `useAuth` hook to your components, which can be used to check the user's authentication state and get the current user's information.
 
-To learn more about Next.js, take a look at the following resources:
+For example, the following component would only be rendered if the user is logged in:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```
+import { useAuth } from "../provider/auth-provider";
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+const ProtectedComponent = () => {
+  const { user } = useAuth();
 
-## Deploy on Vercel
+  if (!user) {
+    return <div>Please log in</div>;
+  }
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+  return <div>Welcome, {user.username}</div>;
+};
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
-# next13-auth
+export default ProtectedComponent;
+
+```
+
+**To log in a user:**
+
+You can use the following code to log in a user:
+
+```
+import { useRouter } from "next/navigation";
+
+const login = async () => {
+  const router = useRouter();
+
+  const response = await fetch("/api/login", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      email: "admin",
+      password: "admin",
+    }),
+  });
+
+  if (response.status === 200) {
+    router.push("/protected");
+  } else {
+    // handle error
+  }
+};
+
+```
+
+**To log out a user:**
+
+You can use the following code to log out a user:
+
+```
+import { useRouter } from "next/navigation";
+
+const logout = () => {
+  const router = useRouter();
+
+  document.cookie = "token=";
+  router.push("/");
+};
+
+```
+
+This is a basic example of how to implement authentication in Next.js 13 using JWTs. You can customize the implementation to meet the specific needs of your project.
