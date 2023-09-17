@@ -90,7 +90,7 @@ const login = async () => {
 
 You can use the following code to log out a user:
 
-```
+```js
 import { useRouter } from "next/navigation";
 
 const logout = () => {
