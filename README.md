@@ -39,7 +39,7 @@ To use authentication in your Next.js 13 project, you can wrap your app in the `
 
 For example, the following component would only be rendered if the user is logged in:
 
-```
+```js
 import { useAuth } from "../provider/auth-provider";
 
 const ProtectedComponent = () => {
@@ -60,7 +60,7 @@ export default ProtectedComponent;
 
 You can use the following code to log in a user:
 
-```
+```js
 import { useRouter } from "next/navigation";
 
 const login = async () => {
